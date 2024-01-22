@@ -1,15 +1,13 @@
 package Test.PageObjectModel;
 
-import io.cucumber.java.After;
-import io.cucumber.java.AfterAll;
-import io.cucumber.java.Before;
-import io.cucumber.java.Scenario;
+import io.cucumber.java.*;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.openqa.selenium.*;
 import org.testng.Assert;
+import org.testng.annotations.AfterTest;
 
 import java.sql.DriverManager;
 
@@ -68,6 +66,13 @@ public class StepDefPG {
                 "Log out";
         Assert.assertEquals(actual,expected);
     }
+    @AfterStep
+    public void attach(Scenario scenario)throws Throwable{
+        if(scenario.isFailed()){
+            final byte[] screenshotTaken= ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+            scenario.attach(screenshotTaken,"image/png","Failed");
+        }
+    }
 
     @Given("user on homepage")
     public void userOnHomepage() {
@@ -85,7 +90,7 @@ public class StepDefPG {
     @Then("user logout successfully")
     public void userLogoutSuccessfully() {
         String actual = driver.getTitle();
-        String expected = "Test Login | Practice Test Automation";
+        String expected = "Test Login | Practice Test Automation |";
         Assert.assertEquals(actual,expected);
     }
     @After
