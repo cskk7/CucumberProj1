@@ -6,7 +6,7 @@ Feature: TestLogin
     And user clicked submit
     Then user login successfully
 #
-#  Scenario: PTA-logout
-#    Given user on homepage
+  Scenario: PTA-logout
+    Given user on homepage
     When user clicked logout
     Then user logout successfully

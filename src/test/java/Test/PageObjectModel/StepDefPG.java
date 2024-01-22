@@ -11,13 +11,26 @@ import io.cucumber.java.en.When;
 import org.openqa.selenium.*;
 import org.testng.Assert;
 
+import java.sql.DriverManager;
+
 public class StepDefPG {
     static WebDriver driver;
+//    class Utility{
+//
+//        public static Scenario message;
+//
+//        static int i = 1;
+//        public static void takeScreenShotAfterEveryStep() {
+//            byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+//            message.attach(screenshot, "image/png","pic"+(i++));
+//        }
+//    }
 
     @Before
     public void ScenarioName(Scenario scenario){
         driver  = DriverFactory.getDriver();
         System.out.println("---> scenario: "+scenario.getName());
+//            Utility.message = scenario;
     }
 
     @Given("user on loginpage")
@@ -79,8 +92,9 @@ public class StepDefPG {
     public void cleanUp(Scenario scenario)
     {
 
-        System.out.println("---> scenario: "+scenario.getStatus());
-        scenario.log("Karthiq is a good boy...");
-        driver.quit();
+        scenario.log("---> scenario: "+scenario.getStatus());
+
+        TakesScreenshot tk = (TakesScreenshot) driver;
+        scenario.attach(tk.getScreenshotAs(OutputType.BYTES),"image/png","Screenshot");
     }
 }
