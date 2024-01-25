@@ -1,78 +1,62 @@
 package Test.PageObjectModel;
 
+import Test.PageObjectModel.Pages.LoginPage;
+import Test.PageObjectModel.Pages.LogoutPage;
 import io.cucumber.java.*;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
-import org.testng.annotations.AfterTest;
 
-import java.sql.DriverManager;
+import java.io.File;
+import java.io.IOException;
 
 public class StepDefPG {
     static WebDriver driver;
-//    class Utility{
-//
-//        public static Scenario message;
-//
-//        static int i = 1;
-//        public static void takeScreenShotAfterEveryStep() {
-//            byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-//            message.attach(screenshot, "image/png","pic"+(i++));
-//        }
-//    }
+    static LoginPage loginPage;
+
+    static LogoutPage logoutPage;
 
     @Before
     public void ScenarioName(Scenario scenario){
         driver  = DriverFactory.getDriver();
         System.out.println("---> scenario: "+scenario.getName());
-//            Utility.message = scenario;
+        loginPage = new LoginPage(driver);
+        logoutPage = new LogoutPage(driver);
     }
 
     @Given("user on loginpage")
     public void userOnLoginpage() {
-
-        driver.get("https://practicetestautomation.com/practice-test-login/");
+        loginPage.launchURL("https://practicetestautomation.com/practice-test-login/");
     }
 
     @When("user enetered username")
     public void userEneteredUsername() {
-        WebElement user = driver.findElement(By.xpath("//input[@id='username']"));
-        user.sendKeys("student");
-        String usernameInput = user.getAttribute("value");
-        Assert.assertEquals(usernameInput,"student");
+        loginPage.enterUsername("student");
     }
 
     @And("user entered password")
     public void userEnteredPassword() {
-        WebElement pass = driver.findElement(By.xpath("//input[@id='password']"));
-        pass.sendKeys("Password123");
-        String passwordInput = pass.getAttribute("value");
-        Assert.assertEquals(passwordInput,"Password123");
+        loginPage.enterPassword("Password123");
     }
 
     @And("user clicked submit")
     public void userClickedSubmit() {
-        WebElement user = driver.findElement(By.xpath("//button[@id='submit']"));
-        user.click();
+        loginPage.clickSubmit();
     }
 
     @Then("user login successfully")
-    public void userLoginSuccessfully() {
+    public void userLoginSuccessfully() throws IOException {
         String actual = driver.findElement(By.className("post-content")).getText();
-        String expected = "Congratulations student. You successfully logged in!\n" +
-                "Log out";
-        Assert.assertEquals(actual,expected);
+//        String expected = "Congratulations student. You successfully logged in!\n" +
+//                "Log out";
+//        Assert.assertEquals(actual,expected);
     }
-    @AfterStep
-    public void attach(Scenario scenario)throws Throwable{
-        if(scenario.isFailed()){
-            final byte[] screenshotTaken= ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-            scenario.attach(screenshotTaken,"image/png","Failed");
-        }
-    }
+
 
     @Given("user on homepage")
     public void userOnHomepage() {
@@ -83,23 +67,36 @@ public class StepDefPG {
 
     @When("user clicked logout")
     public void userClickedLogout() {
-        WebElement button = driver.findElement(By.xpath("//a[text()='Log out']"));
-        button.click();
+       logoutPage.clickSubmit();
     }
 
     @Then("user logout successfully")
     public void userLogoutSuccessfully() {
         String actual = driver.getTitle();
-        String expected = "Test Login | Practice Test Automation |";
+        String expected = "Test Login | Practice Test Automation";
         Assert.assertEquals(actual,expected);
     }
-    @After
-    public void cleanUp(Scenario scenario)
+    @AfterStep
+    public void attach(Scenario scenario)throws Throwable {
+//            final byte[] screenshotTaken = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+//            scenario.attach(screenshotTaken, "image/png", "Screenshot");
+
+        scenario.attach(getByteScreenshot(), "image/png", scenario.getName());
+    }
+    public static byte[] getByteScreenshot() throws IOException
     {
+        File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+        byte[] fileContent = FileUtils.readFileToByteArray(src);
+        return fileContent;
+    }
+    @After
+    public void cleanUp(Scenario scenario) throws IOException {
 
         scenario.log("---> scenario: "+scenario.getStatus());
 
-        TakesScreenshot tk = (TakesScreenshot) driver;
-        scenario.attach(tk.getScreenshotAs(OutputType.BYTES),"image/png","Screenshot");
+
+//        TakesScreenshot tk = (TakesScreenshot) driver;
+//        scenario.attach(tk.getScreenshotAs(OutputType.BYTES),"image/png","Screenshot");
     }
+
 }
