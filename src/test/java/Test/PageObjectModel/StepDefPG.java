@@ -14,6 +14,7 @@ import org.testng.Assert;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class StepDefPG {
     static WebDriver driver;
@@ -27,6 +28,7 @@ public class StepDefPG {
         System.out.println("---> scenario: "+scenario.getName());
         loginPage = new LoginPage(driver);
         logoutPage = new LogoutPage(driver);
+        driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
     }
 
     @Given("user on loginpage")
@@ -78,17 +80,17 @@ public class StepDefPG {
     }
     @AfterStep
     public void attach(Scenario scenario)throws Throwable {
-//            final byte[] screenshotTaken = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-//            scenario.attach(screenshotTaken, "image/png", "Screenshot");
+            final byte[] screenshotTaken = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+            scenario.attach(screenshotTaken, "image/png", "Screenshot");
 
-        scenario.attach(getByteScreenshot(), "image/png", scenario.getName());
+//        scenario.attach(getByteScreenshot(), "image/png", scenario.getName());
     }
-    public static byte[] getByteScreenshot() throws IOException
-    {
-        File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-        byte[] fileContent = FileUtils.readFileToByteArray(src);
-        return fileContent;
-    }
+//    public static byte[] getByteScreenshot() throws IOException
+//    {
+//        File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+//        byte[] fileContent = FileUtils.readFileToByteArray(src);
+//        return fileContent;
+//    }
     @After
     public void cleanUp(Scenario scenario) throws IOException {
 

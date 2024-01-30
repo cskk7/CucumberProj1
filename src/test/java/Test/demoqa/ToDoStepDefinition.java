@@ -17,7 +17,7 @@ import org.testng.Assert;
 public class ToDoStepDefinition {
 
 
-    protected WebDriver driver;
+    WebDriver driver;
     @Before
     public void setup() {
         driver = new ChromeDriver();
