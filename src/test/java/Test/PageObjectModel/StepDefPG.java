@@ -100,5 +100,8 @@ public class StepDefPG {
 //        TakesScreenshot tk = (TakesScreenshot) driver;
 //        scenario.attach(tk.getScreenshotAs(OutputType.BYTES),"image/png","Screenshot");
     }
-
+//    @AfterAll
+//    public void quit(){
+//        driver.quit();
+//    }
 }
